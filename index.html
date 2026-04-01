@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="穿搭顾问">
+<meta name="theme-color" content="#7F77DD">
+<title>今日穿搭顾问</title>
+<link rel="manifest" href="./manifest.json">
+<style>
+:root{--bg:#fff;--bg2:#f5f5f7;--bg3:#ebebed;--text:#1a1a1a;--text2:#6e6e73;--text3:#aeaeb2;--border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);--purple:#7F77DD;--purple-l:#AFA9EC;--purple-bg:#EEEDFE;--purple-t:#26215C;--teal:#1D9E75;--teal-bg:#9FE1CB;--teal-t:#04342C;--coral-bg:#F5C4B3;--coral-t:#4A1B0C;--coral:#D85A30;--r:12px;--rs:8px;}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f5f5f7;--text2:#aeaeb2;--text3:#6e6e73;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);--purple-bg:#2d2a4a;--purple-t:#cec9f8;--teal-bg:#0d3328;--teal-t:#7fd4b8;--coral-bg:#3d1e12;--coral-t:#f5c4b3;}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:-apple-system,'PingFang SC','Hiragino Sans',sans-serif;background:var(--bg3);}
+#app{max-width:430px;margin:0 auto;height:100vh;height:100dvh;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;position:relative;}
+
+/* Setup */
+#setupScreen{position:absolute;inset:0;background:var(--bg);z-index:300;overflow-y:auto;padding-bottom:40px;}
+.s-hero{padding:60px 24px 24px;text-align:center;}
+.s-hero .ico{font-size:56px;margin-bottom:16px;}
+.s-hero h1{font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.s-hero p{font-size:14px;color:var(--text2);line-height:1.6;}
+.s-sec{padding:0 20px 14px;}
+.s-label{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;}
+.s-hint{font-size:12px;color:var(--text2);margin-bottom:9px;line-height:1.5;}
+.s-hint a{color:var(--purple);}
+.s-input{width:100%;padding:11px 13px;border:0.5px solid var(--border2);border-radius:var(--rs);font-size:13px;background:var(--bg2);color:var(--text);outline:none;font-family:monospace;}
+.s-input:focus{border-color:var(--purple);}
+.badge-req{display:inline-block;padding:2px 7px;border-radius:99px;background:var(--purple-bg);color:var(--purple-t);font-size:10px;font-weight:500;margin-left:5px;vertical-align:middle;}
+.badge-opt{display:inline-block;padding:2px 7px;border-radius:99px;background:var(--bg2);color:var(--text3);font-size:10px;margin-left:5px;vertical-align:middle;}
+.s-div{height:0.5px;background:var(--border);margin:4px 20px 16px;}
+.s-btn{display:block;width:calc(100% - 40px);margin:10px 20px 0;padding:14px;background:var(--purple);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;}
+.s-skip{display:block;text-align:center;margin-top:12px;font-size:13px;color:var(--text3);cursor:pointer;padding:4px;}
+.s-err{font-size:11px;color:#E24B4A;margin-top:5px;min-height:16px;}
+
+/* Header */
+.hdr{padding:52px 18px 12px;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;flex-shrink:0;}
+.hdr-l h1{font-size:19px;font-weight:600;color:var(--text);}
+.hdr-l p{font-size:12px;color:var(--text2);margin-top:2px;}
+.hdr-r{display:flex;align-items:center;gap:5px;}
+.lang-switcher{display:flex;gap:3px;}
+.lang-btn{padding:3px 7px;border-radius:99px;border:0.5px solid var(--border2);background:transparent;font-size:11px;color:var(--text2);cursor:pointer;}
+.lang-btn.active{background:var(--purple-bg);color:var(--purple-t);border-color:var(--purple-l);font-weight:500;}
+.cfg-btn{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--border);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+
+/* Tabs */
+.tabs{display:flex;border-bottom:0.5px solid var(--border);flex-shrink:0;}
+.tab{flex:1;padding:10px;font-size:13px;color:var(--text2);text-align:center;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all 0.15s;}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple);font-weight:500;}
+
+/* Screens */
+.screen{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px;flex-direction:column;gap:12px;padding-bottom:max(20px,env(safe-area-inset-bottom));}
+.screen.active{display:flex;}
+
+/* Cards */
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r);padding:13px 15px;}
+.clabel{font-size:11px;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* Buttons grid */
+.zodiac-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.zbtn{padding:7px 3px;border:0.5px solid var(--border);border-radius:var(--rs);background:var(--bg2);cursor:pointer;font-size:11px;color:var(--text2);text-align:center;transition:all 0.15s;}
+.zbtn.sel{background:var(--purple-l);color:var(--purple-t);border-color:var(--purple);font-weight:500;}
+.zico{font-size:16px;display:block;margin-bottom:2px;}
+.purpose-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.pbtn{padding:9px 7px;border:0.5px solid var(--border);border-radius:var(--rs);background:var(--bg2);cursor:pointer;font-size:12px;color:var(--text2);text-align:center;transition:all 0.15s;}
+.pbtn.sel{background:var(--teal-bg);color:var(--teal-t);border-color:var(--teal);font-weight:500;}
+.body-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px;}
+.bbtn{padding:7px 4px;border:0.5px solid var(--border);border-radius:var(--rs);background:var(--bg2);cursor:pointer;font-size:11px;color:var(--text2);text-align:center;transition:all 0.15s;}
+.bbtn.sel{background:var(--coral-bg);color:var(--coral-t);border-color:var(--coral);font-weight:500;}
+.bico{font-size:17px;display:block;margin-bottom:2px;}
+
+/* Sliders */
+.srow{display:flex;align-items:center;gap:10px;margin-top:5px;}
+.srow label{font-size:12px;color:var(--text2);min-width:28px;}
+.srow input[type=range]{flex:1;accent-color:var(--purple);}
+.sval{font-size:13px;font-weight:500;color:var(--text);min-width:52px;text-align:right;}
+.bmi{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;}
+
+/* Upload */
+.upload-area{border:1px dashed var(--border2);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;background:var(--bg2);position:relative;overflow:hidden;}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+
+/* Go button */
+.go-btn{width:100%;padding:14px;background:var(--purple);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;}
+.go-btn:disabled{background:var(--bg2);color:var(--text3);cursor:not-allowed;}
+.go-btn.sec{background:var(--bg2);color:var(--text);border:0.5px solid var(--border2);font-weight:400;}
+
+/* Loading */
+.dots{display:inline-flex;gap:4px;}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--purple);animation:blink 1.2s infinite;}
+.dots span:nth-child(2){animation-delay:.2s;}
+.dots span:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
+
+/* Weather */
+.wdot{width:7px;height:7px;border-radius:50%;background:#1D9E75;flex-shrink:0;}
+.wdot.loading{background:#EF9F27;animation:blink 1s infinite;}
+.wdot.error{background:#E24B4A;}
+.mrow{display:flex;gap:6px;margin-top:8px;}
+.mrow input{flex:1;padding:8px 10px;border:0.5px solid var(--border);border-radius:var(--rs);font-size:12px;background:var(--bg2);color:var(--text);outline:none;}
+.mrow button{padding:8px 12px;border:none;border-radius:var(--rs);background:var(--purple);color:#fff;font-size:12px;cursor:pointer;white-space:nowrap;}
+
+/* Results */
+.tag{padding:3px 9px;background:rgba(127,119,221,0.12);color:var(--purple);border-radius:99px;font-size:11px;}
+.swatch{width:34px;height:34px;border-radius:50%;border:2.5px solid var(--bg);box-shadow:0 0 0 1px var(--border2);}
+.div{height:0.5px;background:var(--border);margin:9px 0;}
+.sbadge{display:inline-flex;align-items:center;background:var(--purple-bg);color:var(--purple-t);border-radius:99px;padding:2px 9px;font-size:12px;font-weight:500;}
+.img-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px;}
+.img-box{aspect-ratio:3/4;border-radius:var(--rs);background:var(--bg2);overflow:hidden;border:0.5px solid var(--border);position:relative;}
+.img-box img{width:100%;height:100%;object-fit:cover;display:block;}
+.ilabel{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.45);color:#fff;font-size:10px;padding:4px 6px;}
+.xhsbtn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;text-align:left;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rs);font-size:12px;color:#0a84ff;cursor:pointer;}
+
+/* Wardrobe */
+.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.witem{aspect-ratio:3/4;border-radius:var(--rs);border:0.5px solid var(--border);overflow:hidden;position:relative;background:var(--bg2);}
+.witem img{width:100%;height:100%;object-fit:cover;}
+.wlabel{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.4);color:#fff;font-size:10px;padding:3px 5px;text-align:center;}
+.wdel{position:absolute;top:4px;right:4px;width:18px;height:18px;background:rgba(0,0,0,.45);color:#fff;border-radius:50%;border:none;cursor:pointer;font-size:12px;line-height:18px;text-align:center;}
+.wadd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--text3);cursor:pointer;border:1px dashed var(--border2);border-radius:var(--rs);aspect-ratio:3/4;background:var(--bg2);position:relative;overflow:hidden;}
+.wadd input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.ctabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.cbtn{padding:4px 10px;border:0.5px solid var(--border);border-radius:99px;background:var(--bg2);font-size:12px;color:var(--text2);cursor:pointer;}
+.cbtn.active{background:var(--purple-bg);color:var(--purple-t);border-color:var(--purple-l);}
+
+/* Modal */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;}
+.mbox{background:var(--bg);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:430px;padding-bottom:max(20px,env(safe-area-inset-bottom));}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="setupScreen">
+  <div class="s-hero">
+    <div class="ico">✨</div>
+    <h1 id="s-title">欢迎使用穿搭顾问</h1>
+    <p id="s-desc">首次使用需配置 API Key，保存在你的设备上，不上传任何服务器。</p>
+  </div>
+  <div class="s-sec">
+    <div class="s-label">Gemini API Key <span class="badge-req" id="s-req">必填</span></div>
+    <div class="s-hint" id="s-h1">AI 穿搭推荐核心。免费获取：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key</div>
+    <input class="s-input" id="inp-ak" type="password" placeholder="AIzaSy...">
+    <div class="s-err" id="s-err"></div>
+  </div>
+  <div class="s-div"></div>
+  <div class="s-sec">
+    <div class="s-label">OpenWeatherMap Key <span class="badge-opt" id="s-opt1">可选</span></div>
+    <div class="s-hint" id="s-h2">实时天气。免费注册 <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a> → My API Keys</div>
+    <input class="s-input" id="inp-wk" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+  </div>
+  <div class="s-div"></div>
+  <div class="s-sec">
+    <div class="s-label">Unsplash Access Key <span class="badge-opt">可选</span></div>
+    <div class="s-hint" id="s-h3">参考穿搭图片。<a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> → New Application</div>
+    <input class="s-input" id="inp-uk" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+  </div>
+  <button class="s-btn" id="s-save" onclick="saveKeys()">保存并开始使用</button>
+  <span class="s-skip" id="s-skip" onclick="skipSetup()">已配置过？跳过直接进入</span>
+</div>
+
+<div class="hdr">
+  <div class="hdr-l">
+    <h1 id="hdr-title">✨ 今日穿搭顾问</h1>
+    <p id="hdr-sub">星座 · 天气 · 身材 · 衣橱</p>
+  </div>
+  <div class="hdr-r">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ja')">日本語</button>
+    </div>
+    <button class="cfg-btn" onclick="openCfg()">⚙️</button>
+  </div>
+</div>
+<div class="tabs">
+  <button class="tab active" id="tab-rec" onclick="switchTab('rec')"></button>
+  <button class="tab" id="tab-ward" onclick="switchTab('ward')"></button>
+</div>
+
+<div class="screen active" id="screen-rec">
+  <div class="card">
+    <div class="clabel" id="lbl-w"></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;">
+      <div class="wdot loading" id="wdot"></div>
+      <span style="font-size:12px;color:var(--text2);" id="wstatus"></span>
+    </div>
+    <div id="wdisp" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:30px;font-weight:600;color:var(--text);line-height:1;" id="wtemp"></div>
+          <div style="font-size:13px;color:var(--text2);margin-top:3px;" id="wdesc2"></div>
+          <div style="font-size:12px;color:var(--text3);" id="wcity"></div>
+        </div>
+        <div style="font-size:42px;line-height:1;" id="wicon">☀️</div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:9px;flex-wrap:wrap;">
+        <div style="font-size:12px;color:var(--text2);">💧 <span id="whumid"></span></div>
+        <div style="font-size:12px;color:var(--text2);">💨 <span id="wwind"></span></div>
+        <div style="font-size:12px;color:var(--text2);">🌡️ <span id="wfeel"></span></div>
+      </div>
+      <div style="margin-top:8px;padding:8px 10px;background:var(--bg2);border-radius:var(--rs);font-size:12px;color:var(--text);line-height:1.5;" id="wadvice"></div>
+    </div>
+    <div class="mrow">
+      <input id="cityInput" onkeydown="if(event.key==='Enter')fetchCity()">
+      <button onclick="fetchCity()" id="btn-cs"></button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="clabel" id="lbl-z"></div>
+    <div class="zodiac-grid" id="zgrid"></div>
+  </div>
+  <div class="card">
+    <div class="clabel" id="lbl-b"></div>
+    <div class="srow"><label id="lbl-h"></label><input type="range" min="145" max="195" value="165" step="1" id="hslider" oninput="updateBody()"><span class="sval" id="hval">165 cm</span></div>
+    <div class="srow" style="margin-top:9px;"><label id="lbl-wt"></label><input type="range" min="40" max="100" value="55" step="1" id="wslider" oninput="updateBody()"><span class="sval" id="wval">55 kg</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:7px;font-size:12px;color:var(--text3);">BMI <span id="bmiv" class="bmi"></span><span id="bmil"></span></div>
+    <div class="clabel" style="margin-top:11px;" id="lbl-bt"></div>
+    <div class="body-grid" id="bgrid"></div>
+  </div>
+  <div class="card">
+    <div class="clabel" id="lbl-p"></div>
+    <div class="purpose-grid" id="pgrid"></div>
+  </div>
+  <div class="card">
+    <div class="clabel" id="lbl-ph"></div>
+    <div class="upload-area" id="uparea">
+      <input type="file" accept="image/*" id="phoinput" onchange="handlePhoto(event)">
+      <div style="font-size:26px;margin-bottom:6px;">📷</div>
+      <div style="font-size:13px;color:var(--text2);" id="up-txt"></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px;" id="up-sub"></div>
+    </div>
+    <img id="previmg" style="display:none;width:100%;max-height:140px;object-fit:cover;border-radius:var(--rs);margin-top:9px;">
+  </div>
+  <button class="go-btn" id="goBtn" onclick="getRecommendation()" disabled></button>
+  <div id="resSec" style="display:none;flex-direction:column;gap:12px;">
+    <div class="card" id="loadCard" style="text-align:center;padding:20px;">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <p style="font-size:13px;color:var(--text2);margin-top:10px;" id="load-txt"></p>
+    </div>
+    <div id="resCards" style="display:none;flex-direction:column;gap:12px;"></div>
+  </div>
+  <div style="height:20px;"></div>
+</div>
+
+<div class="screen" id="screen-ward">
+  <div class="ctabs" id="ctabs"></div>
+  <div class="wgrid" id="wgrid"></div>
+  <div id="wempty" style="display:none;text-align:center;padding:32px 20px;color:var(--text3);font-size:13px;line-height:1.8;white-space:pre-line;"></div>
+  <div style="height:20px;"></div>
+</div>
+</div>
+
+<div class="moverlay" id="cfgModal">
+  <div class="mbox" style="max-height:80vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-size:15px;font-weight:600;color:var(--text);" id="cfg-title">API Key 设置</div>
+      <button onclick="closeCfg()" style="background:none;border:none;font-size:20px;color:var(--text2);cursor:pointer;">×</button>
+    </div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px;" id="cfg-desc">Key 保存在你的设备本地，不上传到任何服务器。</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">Gemini API Key</div>
+    <input class="s-input" id="cfg-ak" type="password" placeholder="AIzaSy..." style="margin-bottom:11px;">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">OpenWeatherMap Key</div>
+    <input class="s-input" id="cfg-wk" type="password" placeholder="可选" style="margin-bottom:11px;">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">Unsplash Key</div>
+    <input class="s-input" id="cfg-uk" type="password" placeholder="可选" style="margin-bottom:14px;">
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeCfg()" style="flex:1;padding:11px;border:0.5px solid var(--border2);border-radius:var(--rs);background:var(--bg2);font-size:13px;color:var(--text2);cursor:pointer;" id="cfg-cancel">取消</button>
+      <button onclick="saveCfg()" style="flex:2;padding:11px;border:none;border-radius:var(--rs);background:var(--purple);color:#fff;font-size:13px;font-weight:600;cursor:pointer;" id="cfg-save">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="addModal">
+  <div class="mbox">
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px;" id="m-title"></div>
+    <img id="mpreview" style="width:100%;max-height:160px;object-fit:cover;border-radius:var(--rs);margin-bottom:12px;">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:6px;" id="m-catlbl"></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="mcats"></div>
+    <input id="mname" style="width:100%;padding:9px 12px;border:0.5px solid var(--border);border-radius:var(--rs);font-size:13px;background:var(--bg2);color:var(--text);outline:none;margin-bottom:12px;">
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeModal()" style="flex:1;padding:11px;border:0.5px solid var(--border2);border-radius:var(--rs);background:var(--bg2);font-size:13px;color:var(--text2);cursor:pointer;" id="m-cancel"></button>
+      <button onclick="confirmAdd()" style="flex:2;padding:11px;border:none;border-radius:var(--rs);background:var(--purple);color:#fff;font-size:13px;font-weight:600;cursor:pointer;" id="m-save"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const T={
+  zh:{
+    appTitle:'✨ 今日穿搭顾问',appSub:'星座 · 天气 · 身材 · 衣橱',tabRec:'今日推荐',tabWard:'我的衣橱',
+    sTitle:'欢迎使用穿搭顾问',sDesc:'首次使用需配置 API Key，保存在你的设备上，不上传任何服务器。',sSave:'保存并开始使用',sSkip:'已配置过？跳过直接进入',sReq:'必填',sOpt:'可选',
+    sH1:'AI 穿搭推荐核心。免费获取：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key',
+    sH2:'实时天气。免费注册 <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a> → My API Keys',
+    sH3:'参考图片。<a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> → New Application',
+    lblW:'今日天气',wLoad:'正在获取位置天气…',wOk:'已获取天气 · 可手动修改城市',wFail:'位置权限被拒绝，请手动输入城市',wCityFail:'城市未找到，请检查拼写',wSearching:c=>`正在搜索 "${c}"…`,cityPH:'手动输入城市，如：Tokyo',citySrch:'搜索',
+    lblZ:'你的星座',znames:['白羊','金牛','双子','巨蟹','狮子','处女','天秤','天蝎','射手','摩羯','水瓶','双鱼'],zfull:s=>s+'座',
+    lblB:'身材信息',lblH:'身高',lblWt:'体重',lblBt:'体型特征',
+    btypes:[{i:'🍐',l:'梨形',v:'梨形身材'},{i:'🍎',l:'苹果',v:'苹果形身材'},{i:'⏳',l:'沙漏形',v:'沙漏形身材'},{i:'📏',l:'直筒形',v:'直筒形身材'},{i:'🔺',l:'倒三角',v:'倒三角身材'},{i:'🤔',l:'不确定',v:'不太确定'}],
+    bmilbl:['偏瘦','正常','偏重','肥胖'],
+    lblP:'今天出行目的',purposes:['💼 上班通勤','💝 约会出游','🛍️ 休闲逛街','🏃 运动健身','🎩 正式场合','🏠 居家放松'],pvals:['上班通勤','约会出游','休闲逛街','运动健身','正式场合','居家放松'],
+    lblPh:'上传你的照片（可选）',upTxt:'点击上传正面照',upSub:'AI 结合照片给出更精准建议',
+    goDefault:'请先选择星座和出行目的 ✨',goReady:(s,p)=>`为${s}生成${p}穿搭 ✨`,
+    loadAI:'AI 正在生成专属穿搭…',loadImg:'正在加载参考图片…',
+    lblFort:'今日运势',lblCol:'今日幸运色',lblOut:'专属穿搭方案',lblRef:'参考穿搭图',lblXhs:'在小红书继续探索',xhsBtn:kw=>`🔍 「${kw}」→ 小红书`,
+    resetBtn:'重新推荐 ↺',catAll:'全部',cats:['上衣','下装','外套','鞋子','配件'],
+    mTitle:'添加到衣橱',mCatLbl:'分类',mNamePH:'备注名称（可选）',mCancel:'取消',mSave:'保存到衣橱',addLbl:'添加衣物',
+    wEmpty:'衣橱还是空的\n点击 + 添加你的第一件衣服',
+    cfgTitle:'API Key 设置',cfgDesc:'Key 保存在你的设备本地，不上传到任何服务器。',cfgCancel:'取消',cfgSave:'保存',
+    errNoKey:'请先填写 Gemini API Key（点右上角 ⚙️）',errFail:'推荐失败，请重试。',
+    layer:t=>t<=5?'今天非常冷，厚羽绒服+保暖内搭+围巾手套。':t<=12?'天气偏冷，大衣必备，内搭毛衣或卫衣。':t<=18?'微凉，薄外套或夹克刚刚好。':t<=24?'温度适宜，长袖或薄针织，备件外套。':t<=30?'天气温暖，轻薄面料，T恤短裤都没问题。':'天气炎热，透气凉爽材质，注意防晒。',
+    aiSys:(sign)=>`你是专业时尚顾问，精通星座运势与穿搭搭配，擅长根据身材特征扬长避短。请用中文回答。必须严格返回JSON格式，不能有 markdown 标记和多余文字：{"fortune":"今日${sign}运势一句话（20字内）","colors":[{"hex":"#hex","name":"颜色名","reason":"原因8字内"},{"hex":"#hex","name":"颜色名","reason":"原因8字内"},{"hex":"#hex","name":"颜色名","reason":"原因8字内"}],"weather_tip":"天气穿搭建议（15字内）","style":"风格名称","style_tags":["标签1","标签2","标签3"],"outfit_desc":"具体穿搭建议2-3句，结合天气和身材","body_tip":"身材穿搭技巧一句（20字内）","search_keywords":["英文词1","英文词2","英文词3","英文词4"],"xhs_keywords":["小红书词1","小红书词2","小红书词3"]}`,
+    aiUser:(today,sign,purpose,body,weather,ward)=>`今天${today}，星座${sign}，出行目的${purpose}，${body}。${weather}${ward}`
+  },
+  en:{
+    appTitle:'✨ Daily Outfit Advisor',appSub:'Zodiac · Weather · Body · Wardrobe',tabRec:'Today',tabWard:'Wardrobe',
+    sTitle:'Welcome to Outfit Advisor',sDesc:'You need API keys to get started. They\'re saved on your device only.',sSave:'Save & Start',sSkip:'Already configured? Skip',sReq:'Required',sOpt:'Optional',
+    sH1:'Core AI engine. Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key',
+    sH2:'Live weather. Free at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a> → My API Keys',
+    sH3:'Reference photos. <a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> → New Application',
+    lblW:"Today's Weather",wLoad:'Getting your location…',wOk:'Weather loaded · Edit city manually',wFail:'Location denied — enter city manually',wCityFail:'City not found, check spelling',wSearching:c=>`Searching "${c}"…`,cityPH:'Enter city, e.g. Tokyo',citySrch:'Search',
+    lblZ:'Your Zodiac Sign',znames:['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'],zfull:s=>s,
+    lblB:'Body Info',lblH:'Height',lblWt:'Weight',lblBt:'Body Shape',
+    btypes:[{i:'🍐',l:'Pear',v:'pear shape'},{i:'🍎',l:'Apple',v:'apple shape'},{i:'⏳',l:'Hourglass',v:'hourglass shape'},{i:'📏',l:'Rectangle',v:'rectangular shape'},{i:'🔺',l:'Inv. △',v:'inverted triangle'},{i:'🤔',l:"Not sure",v:'unknown body type'}],
+    bmilbl:['Underweight','Normal','Overweight','Obese'],
+    lblP:"Today's Occasion",purposes:['💼 Work','💝 Date','🛍️ Shopping','🏃 Sports','🎩 Formal','🏠 Home'],pvals:['work commute','date','shopping','sports','formal occasion','staying home'],
+    lblPh:'Upload Your Photo (optional)',upTxt:'Tap to upload',upSub:'AI gives more tailored advice with a photo',
+    goDefault:'Select zodiac & occasion first ✨',goReady:(s,p)=>`Get ${s} outfit for ${p} ✨`,
+    loadAI:'AI is crafting your outfit…',loadImg:'Loading reference photos…',
+    lblFort:"Today's Fortune",lblCol:'Lucky Colors',lblOut:'Your Outfit Plan',lblRef:'Reference Looks',lblXhs:'Explore on Xiaohongshu',xhsBtn:kw=>`🔍 "${kw}" → Xiaohongshu`,
+    resetBtn:'Start Over ↺',catAll:'All',cats:['Tops','Bottoms','Outerwear','Shoes','Accessories'],
+    mTitle:'Add to Wardrobe',mCatLbl:'Category',mNamePH:'Label (optional)',mCancel:'Cancel',mSave:'Save',addLbl:'Add item',
+    wEmpty:'Your wardrobe is empty\nTap + to add your first item',
+    cfgTitle:'API Key Settings',cfgDesc:'Keys are stored locally on your device only.',cfgCancel:'Cancel',cfgSave:'Save',
+    errNoKey:'Please add your Gemini API Key first (tap ⚙️)',errFail:'Failed, please retry.',
+    layer:t=>t<=5?'Freezing — heavy down coat, thermals, scarf & gloves.':t<=12?'Cold — thick coat, layer with sweater or hoodie.':t<=18?'Cool — a light jacket is perfect.':t<=24?'Comfortable — long sleeves or thin knit, keep a layer handy.':t<=30?'Warm — light fabrics, t-shirts fine.':'Hot — breathable fabrics, don\'t forget sun protection.',
+    aiSys:(sign)=>`You are a professional fashion stylist. Reply in English only. Return ONLY valid JSON without markdown block: {"fortune":"One-line ${sign} horoscope (max 20 words)","colors":[{"hex":"#hex","name":"color","reason":"≤6 words"},{"hex":"#hex","name":"color","reason":"≤6 words"},{"hex":"#hex","name":"color","reason":"≤6 words"}],"weather_tip":"Weather tip (≤15 words)","style":"Style name","style_tags":["tag1","tag2","tag3"],"outfit_desc":"2-3 sentences with specific outfit referencing weather and body","body_tip":"Body tip (≤15 words)","search_keywords":["kw1","kw2","kw3","kw4"],"xhs_keywords":["Chinese1","Chinese2","Chinese3"]}`,
+    aiUser:(today,sign,purpose,body,weather,ward)=>`Today: ${today}. Zodiac: ${sign}. Occasion: ${purpose}. Body: ${body}. ${weather}${ward}`
+  },
+  ja:{
+    appTitle:'✨ 今日のコーデ相談',appSub:'星座 · 天気 · 体型 · クローゼット',tabRec:'今日のコーデ',tabWard:'クローゼット',
+    sTitle:'コーデ相談へようこそ',sDesc:'初回のみ API Key の設定が必要です。デバイスに保存され、どこにも送信されません。',sSave:'保存して始める',sSkip:'設定済みの方はスキップ',sReq:'必須',sOpt:'任意',
+    sH1:'AIの中核。無料取得：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key',
+    sH2:'天気情報。無料登録 <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a> → My API Keys',
+    sH3:'参考画像。<a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> → New Application',
+    lblW:'今日の天気',wLoad:'位置情報を取得中…',wOk:'天気取得済み · 手動で変更可',wFail:'位置情報が拒否されました',wCityFail:'都市が見つかりません',wSearching:c=>`"${c}" を検索中…`,cityPH:'都市を入力 例: Tokyo',citySrch:'検索',
+    lblZ:'星座',znames:['牡羊座','牡牛座','双子座','蟹座','獅子座','乙女座','天秤座','蠍座','射手座','山羊座','水瓶座','魚座'],zfull:s=>s,
+    lblB:'体型情報',lblH:'身長',lblWt:'体重',lblBt:'体型タイプ',
+    btypes:[{i:'🍐',l:'洋梨型',v:'洋梨型'},{i:'🍎',l:'りんご型',v:'りんご型'},{i:'⏳',l:'砂時計型',v:'砂時計型'},{i:'📏',l:'ストレート',v:'ストレート型'},{i:'🔺',l:'逆三角',v:'逆三角形'},{i:'🤔',l:'わからない',v:'不明'}],
+    bmilbl:['低体重','普通','過体重','肥満'],
+    lblP:'今日の外出目的',purposes:['💼 通勤','💝 デート','🛍️ お買い物','🏃 スポーツ','🎩 フォーマル','🏠 おうち'],pvals:['通勤','デート','ショッピング','スポーツ','フォーマル','おうち'],
+    lblPh:'写真をアップロード（任意）',upTxt:'タップして写真を追加',upSub:'写真があるとより精度の高いアドバイスが可能',
+    goDefault:'星座と目的を選んでください ✨',goReady:(s,p)=>`${s}の${p}コーデを作成 ✨`,
+    loadAI:'AIがコーデを考え中…',loadImg:'参考画像を読み込み中…',
+    lblFort:'今日の運勢',lblCol:'ラッキーカラー',lblOut:'コーデプラン',lblRef:'参考コーデ',lblXhs:'小紅書でさらに探す',xhsBtn:kw=>`🔍 「${kw}」→ 小紅書`,
+    resetBtn:'やり直す ↺',catAll:'すべて',cats:['トップス','ボトムス','アウター','シューズ','アクセサリー'],
+    mTitle:'クローゼットに追加',mCatLbl:'カテゴリ',mNamePH:'メモ（任意）',mCancel:'キャンセル',mSave:'保存',addLbl:'追加',
+    wEmpty:'クローゼットは空です\n＋を押してアイテムを追加',
+    cfgTitle:'API Key 設定',cfgDesc:'Key はデバイスのみに保存されます。',cfgCancel:'キャンセル',cfgSave:'保存',
+    errNoKey:'Gemini API Key を設定してください（右上の ⚙️）',errFail:'失敗しました。再試行してください。',
+    layer:t=>t<=5?'非常に寒いです。厚手のダウン・防寒インナー・マフラーと手袋が必須。':t<=12?'寒いです。コートが必要、重ね着を。':t<=18?'やや涼しい。薄手のジャケットがちょうどいい。':t<=24?'過ごしやすい気候。長袖で、上着も一枚。':t<=30?'暖かい。軽い素材で、Tシャツも◎。':'暑いです。通気性の良い素材を、日焼け対策も。',
+    aiSys:(sign)=>`あなたはプロのファッションスタイリストです。日本語のみで回答してください。JSONのみ返答してください。マークダウン不要: {"fortune":"${sign}の今日の運勢（20文字以内）","colors":[{"hex":"#hex","name":"色名","reason":"8文字以内"},{"hex":"#hex","name":"色名","reason":"8文字以内"},{"hex":"#hex","name":"色名","reason":"8文字以内"}],"weather_tip":"天気のコツ（15文字以内）","style":"スタイル名","style_tags":["タグ1","タグ2","タグ3"],"outfit_desc":"天気と体型を踏まえたコーデ提案2〜3文","body_tip":"体型ワンポイント（20文字以内）","search_keywords":["kw1","kw2","kw3","kw4"],"xhs_keywords":["中国語ワード1","中国語ワード2","中国語ワード3"]}`,
+    aiUser:(today,sign,purpose,body,weather,ward)=>`今日は${today}。星座：${sign}。目的：${purpose}。体型：${body}。${weather}${ward}`
+  }
+};
+
+const ZICOS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+const WICO={Clear:'☀️',Clouds:'☁️',Rain:'🌧️',Drizzle:'🌦️',Thunderstorm:'⛈️',Snow:'❄️',Mist:'🌫️',Fog:'🌫️',Haze:'🌫️',default:'🌤️'};
+
+let lang=localStorage.getItem('lang')||'zh';
+let selSign='',selPurpose='',selBody='',photob64='';
+let wdata=null,curCat='',pendImg='',pendCatId=0,photoMimeType='image/jpeg';
+let wardrobe=[];try{wardrobe=JSON.parse(localStorage.getItem('wardrobe')||'[]');}catch(e){}
+
+const gk=k=>localStorage.getItem('k_'+k)||'';
+const sk=(k,v)=>v?localStorage.setItem('k_'+k,v):localStorage.removeItem('k_'+k);
+const L=()=>T[lang];
+const tv=(key,...a)=>{const v=L()[key];return typeof v==='function'?v(...a):v;};
+
+// Setup
+function initSetup(){
+  if(!gk('ak')){document.getElementById('setupScreen').style.display='block';}
+  else{document.getElementById('setupScreen').style.display='none';}
+  renderSetupText();
+}
+function renderSetupText(){
+  const l=L();
+  document.getElementById('s-title').textContent=l.sTitle;
+  document.getElementById('s-desc').textContent=l.sDesc;
+  document.getElementById('s-save').textContent=l.sSave;
+  document.getElementById('s-skip').textContent=l.sSkip;
+  document.getElementById('s-req').textContent=l.sReq;
+  document.getElementById('s-opt1').textContent=l.sOpt;
+  document.getElementById('s-h1').innerHTML=l.sH1;
+  document.getElementById('s-h2').innerHTML=l.sH2;
+  document.getElementById('s-h3').innerHTML=l.sH3;
+}
+function saveKeys(){
+  const ak=document.getElementById('inp-ak').value.trim();
+  if(!ak){document.getElementById('s-err').textContent='⚠️ API Key 是必填的';return;}
+  sk('ak',ak);sk('wk',document.getElementById('inp-wk').value.trim());sk('uk',document.getElementById('inp-uk').value.trim());
+  document.getElementById('setupScreen').style.display='none';
+  initWeather();
+}
+function skipSetup(){document.getElementById('setupScreen').style.display='none';if(gk('ak'))initWeather();}
+function openCfg(){
+  document.getElementById('cfg-ak').value=gk('ak');
+  document.getElementById('cfg-wk').value=gk('wk');
+  document.getElementById('cfg-uk').value=gk('uk');
+  document.getElementById('cfgModal').style.display='flex';
+}
+function closeCfg(){document.getElementById('cfgModal').style.display='none';}
+function saveCfg(){
+  sk('ak',document.getElementById('cfg-ak').value.trim());
+  sk('wk',document.getElementById('cfg-wk').value.trim());
+  sk('uk',document.getElementById('cfg-uk').value.trim());
+  closeCfg();if(wdata===null&&gk('wk'))initWeather();
+}
+
+// Lang
+function setLang(l){
+  lang=l;localStorage.setItem('lang',l);
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['zh','en','ja'][i]===l));
+  document.documentElement.lang=l;
+  curCat=L().catAll;
+  renderUI();
+}
+function renderUI(){
+  const l=L();
+  document.getElementById('hdr-title').textContent=l.appTitle;
+  document.getElementById('hdr-sub').textContent=l.appSub;
+  document.getElementById('tab-rec').textContent=l.tabRec;
+  document.getElementById('tab-ward').textContent=l.tabWard;
+  document.getElementById('lbl-w').textContent=l.lblW;
+  document.getElementById('lbl-z').textContent=l.lblZ;
+  document.getElementById('lbl-b').textContent=l.lblB;
+  document.getElementById('lbl-h').textContent=l.lblH;
+  document.getElementById('lbl-wt').textContent=l.lblWt;
+  document.getElementById('lbl-bt').textContent=l.lblBt;
+  document.getElementById('lbl-p').textContent=l.lblP;
+  document.getElementById('lbl-ph').textContent=l.lblPh;
+  document.getElementById('up-txt').textContent=l.upTxt;
+  document.getElementById('up-sub').textContent=l.upSub;
+  document.getElementById('cityInput').placeholder=l.cityPH;
+  document.getElementById('btn-cs').textContent=l.citySrch;
+  document.getElementById('load-txt').textContent=l.loadAI;
+  document.getElementById('m-title').textContent=l.mTitle;
+  document.getElementById('m-catlbl').textContent=l.mCatLbl;
+  document.getElementById('mname').placeholder=l.mNamePH;
+  document.getElementById('m-cancel').textContent=l.mCancel;
+  document.getElementById('m-save').textContent=l.mSave;
+  document.getElementById('wempty').textContent=l.wEmpty;
+  document.getElementById('cfg-title').textContent=l.cfgTitle;
+  document.getElementById('cfg-desc').textContent=l.cfgDesc;
+  document.getElementById('cfg-cancel').textContent=l.cfgCancel;
+  document.getElementById('cfg-save').textContent=l.cfgSave;
+  renderSetupText();updateGoBtn();renderZodiac();renderBody();renderPurpose();renderCatTabs();renderWardrobe();
+  if(wdata)updateWA();
+}
+function renderZodiac(){
+  document.getElementById('zgrid').innerHTML=L().znames.map((z,i)=>{
+    const f=L().zfull(z);
+    return `<button class="zbtn${selSign===f?' sel':''}" data-sign="${f}" onclick="selZ(this)"><span class="zico">${ZICOS[i]}</span>${z}</button>`;
+  }).join('');
+}
+function renderBody(){
+  document.getElementById('bgrid').innerHTML=L().btypes.map(b=>
+    `<button class="bbtn${selBody===b.v?' sel':''}" data-type="${b.v}" onclick="selB(this)"><span class="bico">${b.i}</span>${b.l}</button>`
+  ).join('');
+}
+function renderPurpose(){
+  const l=L();
+  document.getElementById('pgrid').innerHTML=l.purposes.map((p,i)=>
+    `<button class="pbtn${selPurpose===l.pvals[i]?' sel':''}" data-purpose="${l.pvals[i]}" onclick="selP(this)">${p}</button>`
+  ).join('');
+}
+function selZ(btn){document.querySelectorAll('.zbtn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selSign=btn.dataset.sign;updateGoBtn();}
+function selB(btn){document.querySelectorAll('.bbtn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selBody=btn.dataset.type;}
+function selP(btn){document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selPurpose=btn.dataset.purpose;updateGoBtn();}
+function updateGoBtn(){
+  const btn=document.getElementById('goBtn');
+  if(selSign&&selPurpose){btn.disabled=false;btn.textContent=tv('goReady',selSign,selPurpose);}
+  else{btn.disabled=true;btn.textContent=tv('goDefault');}
+}
+
+// Body
+function updateBody(){
+  const h=parseInt(document.getElementById('hslider').value);
+  const w=parseInt(document.getElementById('wslider').value);
+  document.getElementById('hval').textContent=h+' cm';
+  document.getElementById('wval').textContent=w+' kg';
+  const bmi=w/((h/100)**2);
+  const el=document.getElementById('bmiv'),lb=document.getElementById('bmil');
+  el.textContent=bmi.toFixed(1);
+  const lbl=L().bmilbl;
+  if(bmi<18.5){el.style.cssText='background:#E6F1FB;color:#0C447C;';lb.textContent=lbl[0];}
+  else if(bmi<24){el.style.cssText='background:#EAF3DE;color:#27500A;';lb.textContent=lbl[1];}
+  else if(bmi<28){el.style.cssText='background:#FAEEDA;color:#633806;';lb.textContent=lbl[2];}
+  else{el.style.cssText='background:#FCEBEB;color:#791F1F;';lb.textContent=lbl[3];}
+}
+
+// Weather
+function updateWA(){
+  if(!wdata)return;
+  const t=Math.round(wdata.main.temp);
+  document.getElementById('wadvice').textContent=L().layer(t);
+  document.getElementById('whumid').textContent=wdata.main.humidity+'%';
+  document.getElementById('wwind').textContent=Math.round(wdata.wind.speed)+' m/s';
+  document.getElementById('wfeel').textContent=Math.round(wdata.main.feels_like)+'°C';
+}
+function setWUI(d,city){
+  wdata=d;
+  document.getElementById('wtemp').textContent=Math.round(d.main.temp)+'°C';
+  document.getElementById('wdesc2').textContent=d.weather[0].description;
+  document.getElementById('wcity').textContent=city||d.name;
+  document.getElementById('wicon').textContent=WICO[d.weather[0].main]||WICO.default;
+  updateWA();
+  document.getElementById('wdisp').style.display='block';
+  document.getElementById('wdot').className='wdot';
+  document.getElementById('wstatus').textContent=tv('wOk');
+}
+function setWS(type,msg){document.getElementById('wdot').className='wdot '+type;document.getElementById('wstatus').textContent=msg;}
+async function initWeather(){
+  document.getElementById('wstatus').textContent=tv('wLoad');
+  const wk=gk('wk');if(!wk){setWS('error',tv('wFail'));return;}
+  if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>fetchCoords(pos.coords.latitude,pos.coords.longitude),()=>setWS('error',tv('wFail')));}
+  else setWS('error',tv('wFail'));
+}
+async function fetchCoords(lat,lon){
+  const wk=gk('wk');if(!wk)return;
+  try{
+    const lc=lang==='zh'?'zh_cn':lang==='ja'?'ja':'en';
+    const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${wk}&units=metric&lang=${lc}`);
+    const d=await r.json();if(d.cod!==200)throw new Error();setWUI(d);
+  }catch{setWS('error',tv('wFail'));}
+}
+async function fetchCity(){
+  const city=document.getElementById('cityInput').value.trim();if(!city)return;
+  const wk=gk('wk');if(!wk){setWS('error','需要 OpenWeatherMap Key（⚙️）');return;}
+  setWS('loading',tv('wSearching',city));document.getElementById('wdisp').style.display='none';
+  try{
+    const lc=lang==='zh'?'zh_cn':lang==='ja'?'ja':'en';
+    const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${wk}&units=metric&lang=${lc}`);
+    const d=await r.json();if(d.cod!==200)throw new Error();setWUI(d,city);document.getElementById('cityInput').value='';
+  }catch{setWS('error',tv('wCityFail'));}
+}
+
+// Photo
+function handlePhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  photoMimeType=file.type||'image/jpeg';
+  const r=new FileReader();
+  r.onload=ev=>{photob64=ev.target.result.split(',')[1];const img=document.getElementById('previmg');img.src=ev.target.result;img.style.display='block';document.getElementById('uparea').style.display='none';};
+  r.readAsDataURL(file);
+}
+
+// Unsplash
+async function fetchImgs(kws){
+  const uk=gk('uk');if(!uk)return(kws||[]).slice(0,4).map(kw=>({url:null,kw}));
+  const res=[];
+  for(const kw of(kws||[]).slice(0,4)){
+    try{const r=await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(kw+' fashion outfit')}&per_page=1&orientation=portrait&client_id=${uk}`);const d=await r.json();if(d.results&&d.results[0])res.push({url:d.results[0].urls.small,kw,link:d.results[0].links.html});else res.push({url:null,kw});}
+    catch{res.push({url:null,kw});}
+  }
+  return res;
+}
+
+// Main AI call (Google Gemini)
+async function getRecommendation(){
+  const ak=gk('ak');if(!ak){alert(tv('errNoKey'));return;}
+  const h=document.getElementById('hslider').value,w=document.getElementById('wslider').value;
+  const bmi=(w/((h/100)**2)).toFixed(1);
+  const l=L();
+  const bodyStr=`${l.lblH} ${h}cm, ${l.lblWt} ${w}kg, BMI ${bmi}${selBody?', '+selBody:''}`;
+  const today=new Date().toLocaleDateString(lang==='zh'?'zh-CN':lang==='ja'?'ja-JP':'en-US',{month:'long',day:'numeric',weekday:'long'});
+  let wStr='';
+  if(wdata){const t=Math.round(wdata.main.temp);wStr=lang==='zh'?`当前天气：${wdata.weather[0].description}，气温${t}°C，体感${Math.round(wdata.main.feels_like)}°C，湿度${wdata.main.humidity}%。`:lang==='ja'?`現在の天気：${wdata.weather[0].description}，気温${t}°C，体感${Math.round(wdata.main.feels_like)}°C，湿度${wdata.main.humidity}%。`:`Weather: ${wdata.weather[0].description}, ${t}°C, feels like ${Math.round(wdata.main.feels_like)}°C, humidity ${wdata.main.humidity}%.`;}
+  const wdStr=wardrobe.length>0?(lang==='zh'?`用户衣橱：${wardrobe.map(i=>l.cats[i.catId]+(i.name?'('+i.name+')':'')).join('、')}。请优先从衣橱搭配。`:lang==='ja'?`クローゼット：${wardrobe.map(i=>l.cats[i.catId]+(i.name?'('+i.name+')':'')).join('、')}。既存アイテムを活用。`:`Wardrobe: ${wardrobe.map(i=>l.cats[i.catId]+(i.name?'('+i.name+')':'')).join(', ')}. Prioritise existing items.`):'';
+
+  const rs=document.getElementById('resSec');rs.style.display='flex';
+  const lc=document.getElementById('loadCard');lc.style.display='block';
+  lc.innerHTML=`<div class="dots"><span></span><span></span><span></span></div><p style="font-size:13px;color:var(--text2);margin-top:10px;">${l.loadAI}</p>`;
+  document.getElementById('resCards').style.display='none';document.getElementById('goBtn').disabled=true;
+  setTimeout(()=>{document.getElementById('screen-rec').scrollTop=9999;},100);
+
+  const sys=l.aiSys(selSign);
+  const utxt=l.aiUser(today,selSign,selPurpose,bodyStr,wStr,wdStr);
+  
+  // 构建 Gemini 格式的数据
+  let parts = [{text: utxt}];
+  if (photob64) {
+    parts.push({
+      inline_data: { mime_type: photoMimeType, data: photob64 }
+    });
+  }
+  
+  const reqBody = {
+    system_instruction: { parts: [{ text: sys }] },
+    contents: [{ parts: parts }],
+    generationConfig: {
+      responseMimeType: "application/json"
+    }
+  };
+
+  try{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${ak}`,{
+      method:'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(reqBody)
+    });
+    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||res.statusText);}
+    const data=await res.json();
+    
+    // 解析 Gemini 返回的 JSON 数据
+    let resultText = data.candidates[0].content.parts[0].text;
+    const rec=JSON.parse(resultText.replace(/```json|```/g,'').trim());
+
+    lc.innerHTML=`<div class="dots"><span></span><span></span><span></span></div><p style="font-size:13px;color:var(--text2);margin-top:10px;">${l.loadImg}</p>`;
+    const imgs=await fetchImgs(rec.search_keywords);
+    lc.style.display='none';
+    const rc=document.getElementById('resCards');rc.style.display='flex';rc.style.flexDirection='column';rc.style.gap='12px';
+
+    const wb=wdata&&rec.weather_tip?`<div style="margin-top:8px;padding:8px 10px;background:var(--bg2);border-radius:var(--rs);font-size:12px;color:var(--text);line-height:1.5;">${WICO[wdata.weather[0].main]||'🌤️'} ${rec.weather_tip}</div>`:'';
+
+    rc.innerHTML=`
+      <div class="card"><div class="clabel">${l.lblFort}</div><div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap;"><span class="sbadge">${selSign}</span><span style="font-size:13px;color:var(--text);line-height:1.6;">${rec.fortune}</span></div>${wb}</div>
+      <div class="card"><div class="clabel">${l.lblCol}</div><div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">${rec.colors.map(c=>`<div style="text-align:center;"><div class="swatch" style="background:${c.hex};"></div><div style="font-size:11px;color:var(--text2);margin-top:3px;">${c.name}</div><div style="font-size:10px;color:var(--text3);">${c.reason}</div></div>`).join('')}</div></div>
+      <div class="card"><div class="clabel">${l.lblOut}</div><div style="background:var(--bg2);border-radius:var(--rs);padding:8px 10px;font-size:12px;color:var(--text);margin-bottom:9px;">💡 ${rec.body_tip}</div><div style="font-size:14px;font-weight:600;color:var(--text);">${rec.style}</div><div style="display:flex;gap:5px;flex-wrap:wrap;margin:7px 0;">${rec.style_tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="div"></div><div style="font-size:13px;color:var(--text);line-height:1.7;">${rec.outfit_desc}</div></div>
+      <div class="card"><div class="clabel">${l.lblRef}</div><div class="img-grid">${imgs.map(img=>img.url?`<div class="img-box" onclick="window.open('${img.link}','_blank')" style="cursor:pointer;"><img src="${img.url}" loading="lazy"><div class="ilabel">${img.kw}</div></div>`:`<div class="img-box"><div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:10px;color:var(--text3);padding:8px;text-align:center;">${img.kw}</div></div>`).join('')}</div><div style="margin-top:10px;font-size:11px;color:var(--text3);margin-bottom:6px;">${l.lblXhs}</div><div style="display:flex;flex-direction:column;gap:5px;">${(rec.xhs_keywords||[]).map(kw=>`<button class="xhsbtn" onclick="window.open('https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(kw)}','_blank')">${l.xhsBtn(kw)}</button>`).join('')}</div></div>
+      <button class="go-btn sec" onclick="resetApp()">${l.resetBtn}</button>
+    `;
+  }catch(e){
+    lc.innerHTML=`<p style="font-size:13px;color:#E24B4A;">${L().errFail}<br><span style="font-size:11px;opacity:.7;">${e.message}</span></p>`;
+    document.getElementById('goBtn').disabled=false;
+  }
+}
+
+function resetApp(){
+  selSign='';selPurpose='';selBody='';photob64='';
+  document.getElementById('resSec').style.display='none';
+  document.getElementById('previmg').style.display='none';
+  document.getElementById('uparea').style.display='block';
+  document.getElementById('hslider').value=165;document.getElementById('wslider').value=55;
+  updateBody();renderUI();document.getElementById('screen-rec').scrollTop=0;
+}
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tab==='rec'?i===0:i===1));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+tab).classList.add('active');
+}
+
+// Wardrobe
+function renderCatTabs(){
+  const l=L();if(!curCat)curCat=l.catAll;
+  document.getElementById('ctabs').innerHTML=[l.catAll,...l.cats].map(c=>
+    `<button class="cbtn${curCat===c?' active':''}" onclick="filterCat('${c}',this)">${c}</button>`
+  ).join('');
+}
+function renderWardrobe(){
+  const l=L();const grid=document.getElementById('wgrid');const empty=document.getElementById('wempty');
+  const catIdx=l.cats.indexOf(curCat);
+  const items=curCat===l.catAll?wardrobe:wardrobe.filter(i=>i.catId===catIdx);
+  grid.innerHTML='';empty.style.display=wardrobe.length===0?'block':'none';
+  items.forEach(item=>{
+    const idx=wardrobe.indexOf(item);const div=document.createElement('div');div.className='witem';
+    div.innerHTML=`<img src="${item.img}"><div class="wlabel">${l.cats[item.catId]}${item.name?' · '+item.name:''}</div><button class="wdel" onclick="delItem(${idx})">×</button>`;
+    grid.appendChild(div);
+  });
+  const add=document.createElement('div');add.className='wadd';
+  add.innerHTML=`<input type="file" accept="image/*" onchange="openAddModal(event)"><div style="font-size:22px;">+</div><div>${l.addLbl}</div>`;
+  grid.appendChild(add);
+}
+function filterCat(cat,btn){curCat=cat;document.querySelectorAll('.ctabs .cbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderWardrobe();}
+function delItem(idx){wardrobe.splice(idx,1);try{localStorage.setItem('wardrobe',JSON.stringify(wardrobe));}catch(e){}renderWardrobe();}
+function openAddModal(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      const cvs=document.createElement('canvas');
+      let w=img.width, h=img.height, maxW=400;
+      if(w>maxW){h=Math.round((h*maxW)/w); w=maxW;}
+      cvs.width=w; cvs.height=h;
+      cvs.getContext('2d').drawImage(img,0,0,w,h);
+      pendImg=cvs.toDataURL('image/jpeg',0.6);
+      pendCatId=0; 
+      document.getElementById('mpreview').src=pendImg;document.getElementById('mname').value='';
+      document.getElementById('mcats').innerHTML=L().cats.map((c,i)=>`<button class="cbtn${i===0?' active':''}" onclick="selMCat(${i},this)">${c}</button>`).join('');
+      document.getElementById('addModal').style.display='flex';
+    };
+    img.src=ev.target.result;
+  };r.readAsDataURL(file);
+}
+function selMCat(idx,btn){pendCatId=idx;document.querySelectorAll('#mcats .cbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+function confirmAdd(){
+  wardrobe.push({img:pendImg,catId:pendCatId,name:document.getElementById('mname').value.trim()});
+  try{localStorage.setItem('wardrobe',JSON.stringify(wardrobe));}catch(e){alert('存储空间已满，请删除部分衣物！');}
+  closeModal();renderWardrobe();
+}
+
+// Init
+setLang(lang);updateBody();initSetup();
+if(gk('ak'))initWeather();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
