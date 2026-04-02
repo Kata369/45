@@ -107,10 +107,9 @@ html,body{height:100%;font-family:-apple-system,'PingFang SC','Hiragino Sans',sa
 .swatch{width:34px;height:34px;border-radius:50%;border:2.5px solid var(--bg);box-shadow:0 0 0 1px var(--border2);}
 .div{height:0.5px;background:var(--border);margin:9px 0;}
 .sbadge{display:inline-flex;align-items:center;background:var(--purple-bg);color:var(--purple-t);border-radius:99px;padding:2px 9px;font-size:12px;font-weight:500;}
-.img-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px;}
-.img-box{aspect-ratio:3/4;border-radius:var(--rs);background:var(--bg2);overflow:hidden;border:0.5px solid var(--border);position:relative;}
+.img-box{aspect-ratio:1/1;border-radius:var(--rs);background:var(--bg2);overflow:hidden;border:0.5px solid var(--border);position:relative;margin-top:8px;}
 .img-box img{width:100%;height:100%;object-fit:cover;display:block;}
-.ilabel{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.45);color:#fff;font-size:10px;padding:4px 6px;}
+.ilabel{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.5);color:#fff;font-size:11px;padding:6px 8px;font-weight:500;}
 .xhsbtn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;text-align:left;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rs);font-size:12px;color:#0a84ff;cursor:pointer;}
 
 /* Wardrobe */
@@ -141,7 +140,7 @@ html,body{height:100%;font-family:-apple-system,'PingFang SC','Hiragino Sans',sa
   </div>
   <div class="s-sec">
     <div class="s-label">Gemini API Key <span class="badge-req" id="s-req">必填</span></div>
-    <div class="s-hint" id="s-h1">AI 穿搭推荐核心。免费获取：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key</div>
+    <div class="s-hint" id="s-h1">AI 穿搭决策大脑。免费获取：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key</div>
     <input class="s-input" id="inp-ak" type="password" placeholder="AIzaSy...">
     <div class="s-err" id="s-err"></div>
   </div>
@@ -150,12 +149,6 @@ html,body{height:100%;font-family:-apple-system,'PingFang SC','Hiragino Sans',sa
     <div class="s-label">OpenWeatherMap Key <span class="badge-opt" id="s-opt1">可选</span></div>
     <div class="s-hint" id="s-h2">实时天气。免费注册 <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a> → My API Keys</div>
     <input class="s-input" id="inp-wk" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-  </div>
-  <div class="s-div"></div>
-  <div class="s-sec">
-    <div class="s-label">Unsplash Access Key <span class="badge-opt">可选</span></div>
-    <div class="s-hint" id="s-h3">参考穿搭图片。<a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> → New Application</div>
-    <input class="s-input" id="inp-uk" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
   </div>
   <button class="s-btn" id="s-save" onclick="saveKeys()">保存并开始使用</button>
   <span class="s-skip" id="s-skip" onclick="skipSetup()">已配置过？跳过直接进入</span>
@@ -263,9 +256,7 @@ html,body{height:100%;font-family:-apple-system,'PingFang SC','Hiragino Sans',sa
     <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">Gemini API Key</div>
     <input class="s-input" id="cfg-ak" type="password" placeholder="AIzaSy..." style="margin-bottom:11px;">
     <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">OpenWeatherMap Key</div>
-    <input class="s-input" id="cfg-wk" type="password" placeholder="可选" style="margin-bottom:11px;">
-    <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">Unsplash Key</div>
-    <input class="s-input" id="cfg-uk" type="password" placeholder="可选" style="margin-bottom:14px;">
+    <input class="s-input" id="cfg-wk" type="password" placeholder="可选" style="margin-bottom:14px;">
     <div style="display:flex;gap:8px;">
       <button onclick="closeCfg()" style="flex:1;padding:11px;border:0.5px solid var(--border2);border-radius:var(--rs);background:var(--bg2);font-size:13px;color:var(--text2);cursor:pointer;" id="cfg-cancel">取消</button>
       <button onclick="saveCfg()" style="flex:2;padding:11px;border:none;border-radius:var(--rs);background:var(--purple);color:#fff;font-size:13px;font-weight:600;cursor:pointer;" id="cfg-save">保存</button>
@@ -292,9 +283,8 @@ const T={
   zh:{
     appTitle:'✨ 今日穿搭顾问',appSub:'星座 · 天气 · 身材 · 衣橱',tabRec:'今日推荐',tabWard:'我的衣橱',
     sTitle:'欢迎使用穿搭顾问',sDesc:'首次使用需配置 API Key，保存在你的设备上，不上传任何服务器。',sSave:'保存并开始使用',sSkip:'已配置过？跳过直接进入',sReq:'必填',sOpt:'可选',
-    sH1:'AI 穿搭推荐核心。免费获取：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key',
+    sH1:'AI 穿搭决策大脑。免费获取：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key',
     sH2:'实时天气。免费注册 <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a> → My API Keys',
-    sH3:'参考图片。<a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> → New Application',
     lblW:'今日天气',wLoad:'正在获取位置天气…',wOk:'已获取天气 · 可手动修改城市',wFail:'位置权限被拒绝，请手动输入城市',wCityFail:'城市未找到，请检查拼写',wSearching:c=>`正在搜索 "${c}"…`,cityPH:'手动输入城市，如：Tokyo',citySrch:'搜索',
     lblZ:'你的星座',znames:['白羊','金牛','双子','巨蟹','狮子','处女','天秤','天蝎','射手','摩羯','水瓶','双鱼'],zfull:s=>s+'座',
     lblB:'身材信息',lblH:'身高',lblWt:'体重',lblBt:'体型特征',
@@ -303,23 +293,22 @@ const T={
     lblP:'今天出行目的',purposes:['💼 上班通勤','💝 约会出游','🛍️ 休闲逛街','🏃 运动健身','🎩 正式场合','🏠 居家放松'],pvals:['上班通勤','约会出游','休闲逛街','运动健身','正式场合','居家放松'],
     lblPh:'上传你的照片（可选）',upTxt:'点击上传正面照',upSub:'AI 结合照片给出更精准建议',
     goDefault:'请先选择星座和出行目的 ✨',goReady:(s,p)=>`为${s}生成${p}穿搭 ✨`,
-    loadAI:'AI 正在生成专属穿搭…',loadImg:'正在加载参考图片…',
-    lblFort:'今日运势',lblCol:'今日幸运色',lblOut:'专属穿搭方案',lblRef:'参考穿搭图',lblXhs:'在小红书继续探索',xhsBtn:kw=>`🔍 「${kw}」→ 小红书`,
+    loadAI:'AI 正在生成专属穿搭…',loadImg:'正在为您绘制专属穿搭效果图…',
+    lblFort:'今日运势',lblCol:'今日幸运色',lblOut:'专属穿搭方案',lblRef:'✨ 专属穿搭效果图',lblXhs:'在小红书继续探索',xhsBtn:kw=>`🔍 「${kw}」→ 小红书`,
     resetBtn:'重新推荐 ↺',catAll:'全部',cats:['上衣','下装','外套','鞋子','配件'],
     mTitle:'添加到衣橱',mCatLbl:'分类',mNamePH:'备注名称（可选）',mCancel:'取消',mSave:'保存到衣橱',addLbl:'添加衣物',
     wEmpty:'衣橱还是空的\n点击 + 添加你的第一件衣服',
     cfgTitle:'API Key 设置',cfgDesc:'Key 保存在你的设备本地，不上传到任何服务器。',cfgCancel:'取消',cfgSave:'保存',
     errNoKey:'请先填写 Gemini API Key（点右上角 ⚙️）',errFail:'推荐失败，请重试。',
     layer:t=>t<=5?'今天非常冷，厚羽绒服+保暖内搭+围巾手套。':t<=12?'天气偏冷，大衣必备，内搭毛衣或卫衣。':t<=18?'微凉，薄外套或夹克刚刚好。':t<=24?'温度适宜，长袖或薄针织，备件外套。':t<=30?'天气温暖，轻薄面料，T恤短裤都没问题。':'天气炎热，透气凉爽材质，注意防晒。',
-    aiSys:(sign)=>`你是专业时尚顾问，精通星座运势与穿搭搭配，擅长根据身材特征扬长避短。请用中文回答。必须严格返回JSON格式，不能有 markdown 标记和多余文字：{"fortune":"今日${sign}运势一句话（20字内）","colors":[{"hex":"#hex","name":"颜色名","reason":"原因8字内"},{"hex":"#hex","name":"颜色名","reason":"原因8字内"},{"hex":"#hex","name":"颜色名","reason":"原因8字内"}],"weather_tip":"天气穿搭建议（15字内）","style":"风格名称","style_tags":["标签1","标签2","标签3"],"outfit_desc":"具体穿搭建议2-3句，结合天气和身材","body_tip":"身材穿搭技巧一句（20字内）","search_keywords":["英文词1","英文词2","英文词3","英文词4"],"xhs_keywords":["小红书词1","小红书词2","小红书词3"]}`,
+    aiSys:(sign)=>`你是专业时尚顾问，精通星座运势与穿搭搭配，擅长根据身材特征扬长避短。请用中文回答。必须严格返回JSON格式，不能有 markdown 标记和多余文字：{"fortune":"今日${sign}运势一句话（20字内）","colors":[{"hex":"#hex","name":"颜色名","reason":"原因8字内"},{"hex":"#hex","name":"颜色名","reason":"原因8字内"},{"hex":"#hex","name":"颜色名","reason":"原因8字内"}],"weather_tip":"天气穿搭建议（15字内）","style":"风格名称","style_tags":["标签1","标签2","标签3"],"outfit_desc":"具体穿搭建议2-3句，结合天气和身材","body_tip":"身材穿搭技巧一句（20字内）","search_keywords":["用于 AI 画图的英文提示词，要求细节丰富"]} `,
     aiUser:(today,sign,purpose,body,weather,ward)=>`今天${today}，星座${sign}，出行目的${purpose}，${body}。${weather}${ward}`
   },
   en:{
     appTitle:'✨ Daily Outfit Advisor',appSub:'Zodiac · Weather · Body · Wardrobe',tabRec:'Today',tabWard:'Wardrobe',
     sTitle:'Welcome to Outfit Advisor',sDesc:'You need API keys to get started. They\'re saved on your device only.',sSave:'Save & Start',sSkip:'Already configured? Skip',sReq:'Required',sOpt:'Optional',
-    sH1:'Core AI engine. Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key',
-    sH2:'Live weather. Free at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a> → My API Keys',
-    sH3:'Reference photos. <a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> → New Application',
+    sH1:'Core AI engine. Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>',
+    sH2:'Live weather. Free at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a>',
     lblW:"Today's Weather",wLoad:'Getting your location…',wOk:'Weather loaded · Edit city manually',wFail:'Location denied — enter city manually',wCityFail:'City not found, check spelling',wSearching:c=>`Searching "${c}"…`,cityPH:'Enter city, e.g. Tokyo',citySrch:'Search',
     lblZ:'Your Zodiac Sign',znames:['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'],zfull:s=>s,
     lblB:'Body Info',lblH:'Height',lblWt:'Weight',lblBt:'Body Shape',
@@ -328,23 +317,22 @@ const T={
     lblP:"Today's Occasion",purposes:['💼 Work','💝 Date','🛍️ Shopping','🏃 Sports','🎩 Formal','🏠 Home'],pvals:['work commute','date','shopping','sports','formal occasion','staying home'],
     lblPh:'Upload Your Photo (optional)',upTxt:'Tap to upload',upSub:'AI gives more tailored advice with a photo',
     goDefault:'Select zodiac & occasion first ✨',goReady:(s,p)=>`Get ${s} outfit for ${p} ✨`,
-    loadAI:'AI is crafting your outfit…',loadImg:'Loading reference photos…',
-    lblFort:"Today's Fortune",lblCol:'Lucky Colors',lblOut:'Your Outfit Plan',lblRef:'Reference Looks',lblXhs:'Explore on Xiaohongshu',xhsBtn:kw=>`🔍 "${kw}" → Xiaohongshu`,
+    loadAI:'AI is crafting your outfit…',loadImg:'Drawing your exclusive outfit image…',
+    lblFort:"Today's Fortune",lblCol:'Lucky Colors',lblOut:'Your Outfit Plan',lblRef:'✨ AI Generated Look',lblXhs:'Explore on Xiaohongshu',xhsBtn:kw=>`🔍 "${kw}" → Xiaohongshu`,
     resetBtn:'Start Over ↺',catAll:'All',cats:['Tops','Bottoms','Outerwear','Shoes','Accessories'],
     mTitle:'Add to Wardrobe',mCatLbl:'Category',mNamePH:'Label (optional)',mCancel:'Cancel',mSave:'Save',addLbl:'Add item',
     wEmpty:'Your wardrobe is empty\nTap + to add your first item',
     cfgTitle:'API Key Settings',cfgDesc:'Keys are stored locally on your device only.',cfgCancel:'Cancel',cfgSave:'Save',
     errNoKey:'Please add your Gemini API Key first (tap ⚙️)',errFail:'Failed, please retry.',
     layer:t=>t<=5?'Freezing — heavy down coat, thermals, scarf & gloves.':t<=12?'Cold — thick coat, layer with sweater or hoodie.':t<=18?'Cool — a light jacket is perfect.':t<=24?'Comfortable — long sleeves or thin knit, keep a layer handy.':t<=30?'Warm — light fabrics, t-shirts fine.':'Hot — breathable fabrics, don\'t forget sun protection.',
-    aiSys:(sign)=>`You are a professional fashion stylist. Reply in English only. Return ONLY valid JSON without markdown block: {"fortune":"One-line ${sign} horoscope (max 20 words)","colors":[{"hex":"#hex","name":"color","reason":"≤6 words"},{"hex":"#hex","name":"color","reason":"≤6 words"},{"hex":"#hex","name":"color","reason":"≤6 words"}],"weather_tip":"Weather tip (≤15 words)","style":"Style name","style_tags":["tag1","tag2","tag3"],"outfit_desc":"2-3 sentences with specific outfit referencing weather and body","body_tip":"Body tip (≤15 words)","search_keywords":["kw1","kw2","kw3","kw4"],"xhs_keywords":["Chinese1","Chinese2","Chinese3"]}`,
+    aiSys:(sign)=>`You are a professional fashion stylist. Reply in English only. Return ONLY valid JSON without markdown block: {"fortune":"One-line ${sign} horoscope (max 20 words)","colors":[{"hex":"#hex","name":"color","reason":"≤6 words"},{"hex":"#hex","name":"color","reason":"≤6 words"},{"hex":"#hex","name":"color","reason":"≤6 words"}],"weather_tip":"Weather tip (≤15 words)","style":"Style name","style_tags":["tag1","tag2","tag3"],"outfit_desc":"2-3 sentences with specific outfit referencing weather and body","body_tip":"Body tip (≤15 words)","search_keywords":["English prompt for AI image generation, detailed"],"xhs_keywords":["Chinese1","Chinese2","Chinese3"]}`,
     aiUser:(today,sign,purpose,body,weather,ward)=>`Today: ${today}. Zodiac: ${sign}. Occasion: ${purpose}. Body: ${body}. ${weather}${ward}`
   },
   ja:{
     appTitle:'✨ 今日のコーデ相談',appSub:'星座 · 天気 · 体型 · クローゼット',tabRec:'今日のコーデ',tabWard:'クローゼット',
     sTitle:'コーデ相談へようこそ',sDesc:'初回のみ API Key の設定が必要です。デバイスに保存され、どこにも送信されません。',sSave:'保存して始める',sSkip:'設定済みの方はスキップ',sReq:'必須',sOpt:'任意',
-    sH1:'AIの中核。無料取得：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key',
-    sH2:'天気情報。無料登録 <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a> → My API Keys',
-    sH3:'参考画像。<a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> → New Application',
+    sH1:'AIの中核。無料取得：<a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>',
+    sH2:'天気情報。無料登録 <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a>',
     lblW:'今日の天気',wLoad:'位置情報を取得中…',wOk:'天気取得済み · 手動で変更可',wFail:'位置情報が拒否されました',wCityFail:'都市が見つかりません',wSearching:c=>`"${c}" を検索中…`,cityPH:'都市を入力 例: Tokyo',citySrch:'検索',
     lblZ:'星座',znames:['牡羊座','牡牛座','双子座','蟹座','獅子座','乙女座','天秤座','蠍座','射手座','山羊座','水瓶座','魚座'],zfull:s=>s,
     lblB:'体型情報',lblH:'身長',lblWt:'体重',lblBt:'体型タイプ',
@@ -353,15 +341,15 @@ const T={
     lblP:'今日の外出目的',purposes:['💼 通勤','💝 デート','🛍️ お買い物','🏃 スポーツ','🎩 フォーマル','🏠 おうち'],pvals:['通勤','デート','ショッピング','スポーツ','フォーマル','おうち'],
     lblPh:'写真をアップロード（任意）',upTxt:'タップして写真を追加',upSub:'写真があるとより精度の高いアドバイスが可能',
     goDefault:'星座と目的を選んでください ✨',goReady:(s,p)=>`${s}の${p}コーデを作成 ✨`,
-    loadAI:'AIがコーデを考え中…',loadImg:'参考画像を読み込み中…',
-    lblFort:'今日の運勢',lblCol:'ラッキーカラー',lblOut:'コーデプラン',lblRef:'参考コーデ',lblXhs:'小紅書でさらに探す',xhsBtn:kw=>`🔍 「${kw}」→ 小紅書`,
+    loadAI:'AIがコーデを考え中…',loadImg:'専用のコーデ画像を生成中…',
+    lblFort:'今日の運勢',lblCol:'ラッキーカラー',lblOut:'コーデプラン',lblRef:'✨ AI生成画像',lblXhs:'小紅書でさらに探す',xhsBtn:kw=>`🔍 「${kw}」→ 小紅書`,
     resetBtn:'やり直す ↺',catAll:'すべて',cats:['トップス','ボトムス','アウター','シューズ','アクセサリー'],
     mTitle:'クローゼットに追加',mCatLbl:'カテゴリ',mNamePH:'メモ（任意）',mCancel:'キャンセル',mSave:'保存',addLbl:'追加',
     wEmpty:'クローゼットは空です\n＋を押してアイテムを追加',
     cfgTitle:'API Key 設定',cfgDesc:'Key はデバイスのみに保存されます。',cfgCancel:'キャンセル',cfgSave:'保存',
     errNoKey:'Gemini API Key を設定してください（右上の ⚙️）',errFail:'失敗しました。再試行してください。',
     layer:t=>t<=5?'非常に寒いです。厚手のダウン・防寒インナー・マフラーと手袋が必須。':t<=12?'寒いです。コートが必要、重ね着を。':t<=18?'やや涼しい。薄手のジャケットがちょうどいい。':t<=24?'過ごしやすい気候。長袖で、上着も一枚。':t<=30?'暖かい。軽い素材で、Tシャツも◎。':'暑いです。通気性の良い素材を、日焼け対策も。',
-    aiSys:(sign)=>`あなたはプロのファッションスタイリストです。日本語のみで回答してください。JSONのみ返答してください。マークダウン不要: {"fortune":"${sign}の今日の運勢（20文字以内）","colors":[{"hex":"#hex","name":"色名","reason":"8文字以内"},{"hex":"#hex","name":"色名","reason":"8文字以内"},{"hex":"#hex","name":"色名","reason":"8文字以内"}],"weather_tip":"天気のコツ（15文字以内）","style":"スタイル名","style_tags":["タグ1","タグ2","タグ3"],"outfit_desc":"天気と体型を踏まえたコーデ提案2〜3文","body_tip":"体型ワンポイント（20文字以内）","search_keywords":["kw1","kw2","kw3","kw4"],"xhs_keywords":["中国語ワード1","中国語ワード2","中国語ワード3"]}`,
+    aiSys:(sign)=>`あなたはプロのファッションスタイリストです。日本語のみで回答してください。JSONのみ返答してください。マークダウン不要: {"fortune":"${sign}の今日の運勢（20文字以内）","colors":[{"hex":"#hex","name":"色名","reason":"8文字以内"},{"hex":"#hex","name":"色名","reason":"8文字以内"},{"hex":"#hex","name":"色名","reason":"8文字以内"}],"weather_tip":"天気のコツ（15文字以内）","style":"スタイル名","style_tags":["タグ1","タグ2","タグ3"],"outfit_desc":"天気と体型を踏まえたコーデ提案2〜3文","body_tip":"体型ワンポイント（20文字以内）","search_keywords":["画像生成AIのための英語プロンプト、詳細に"],"xhs_keywords":["中国語ワード1","中国語ワード2","中国語ワード3"]}`,
     aiUser:(today,sign,purpose,body,weather,ward)=>`今日は${today}。星座：${sign}。目的：${purpose}。体型：${body}。${weather}${ward}`
   }
 };
@@ -395,12 +383,12 @@ function renderSetupText(){
   document.getElementById('s-opt1').textContent=l.sOpt;
   document.getElementById('s-h1').innerHTML=l.sH1;
   document.getElementById('s-h2').innerHTML=l.sH2;
-  document.getElementById('s-h3').innerHTML=l.sH3;
 }
 function saveKeys(){
   const ak=document.getElementById('inp-ak').value.trim();
   if(!ak){document.getElementById('s-err').textContent='⚠️ API Key 是必填的';return;}
-  sk('ak',ak);sk('wk',document.getElementById('inp-wk').value.trim());sk('uk',document.getElementById('inp-uk').value.trim());
+  sk('ak',ak);
+  sk('wk',document.getElementById('inp-wk').value.trim());
   document.getElementById('setupScreen').style.display='none';
   initWeather();
 }
@@ -408,15 +396,14 @@ function skipSetup(){document.getElementById('setupScreen').style.display='none'
 function openCfg(){
   document.getElementById('cfg-ak').value=gk('ak');
   document.getElementById('cfg-wk').value=gk('wk');
-  document.getElementById('cfg-uk').value=gk('uk');
   document.getElementById('cfgModal').style.display='flex';
 }
 function closeCfg(){document.getElementById('cfgModal').style.display='none';}
 function saveCfg(){
   sk('ak',document.getElementById('cfg-ak').value.trim());
   sk('wk',document.getElementById('cfg-wk').value.trim());
-  sk('uk',document.getElementById('cfg-uk').value.trim());
-  closeCfg();if(wdata===null&&gk('wk'))initWeather();
+  closeCfg();
+  if(wdata===null&&gk('wk'))initWeather();
 }
 
 // Lang
@@ -556,18 +543,32 @@ function handlePhoto(e){
   r.readAsDataURL(file);
 }
 
-// Unsplash
+// Backend Image Generation (Vercel Node.js endpoint required)
 async function fetchImgs(kws){
-  const uk=gk('uk');if(!uk)return(kws||[]).slice(0,4).map(kw=>({url:null,kw}));
-  const res=[];
-  for(const kw of(kws||[]).slice(0,4)){
-    try{const r=await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(kw+' fashion outfit')}&per_page=1&orientation=portrait&client_id=${uk}`);const d=await r.json();if(d.results&&d.results[0])res.push({url:d.results[0].urls.small,kw,link:d.results[0].links.html});else res.push({url:null,kw});}
-    catch{res.push({url:null,kw});}
+  const resArray = [];
+  const kw = (kws || [])[0]; 
+  if (!kw) return [{ url: null, kw: '无穿搭描述' }];
+
+  try {
+    const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: kw })
+    });
+    const data = await response.json();
+    if (data.url) {
+      resArray.push({ url: data.url, kw: kw, link: data.url });
+    } else {
+      throw new Error(data.error || '生图失败');
+    }
+  } catch (e) {
+    console.error(e);
+    resArray.push({ url: null, kw: 'AI 生成失败，请检查后端配置或稍后重试' });
   }
-  return res;
+  return resArray;
 }
 
-// Main AI call (Google Gemini)
+// Main AI call (Google Gemini 2.0 Flash)
 async function getRecommendation(){
   const ak=gk('ak');if(!ak){alert(tv('errNoKey'));return;}
   const h=document.getElementById('hslider').value,w=document.getElementById('wslider').value;
@@ -605,7 +606,8 @@ async function getRecommendation(){
   };
 
   try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${ak}`,{
+    // 采用最新支持且稳定的 Gemini 2.0 Flash 模型
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${ak}`,{
       method:'POST',
       headers: { 'Content-Type':'application/json' },
       body: JSON.stringify(reqBody)
@@ -613,22 +615,27 @@ async function getRecommendation(){
     if(!res.ok){const err=await res.json();throw new Error(err.error?.message||res.statusText);}
     const data=await res.json();
     
-    // 解析 Gemini 返回的 JSON 数据
     let resultText = data.candidates[0].content.parts[0].text;
     const rec=JSON.parse(resultText.replace(/```json|```/g,'').trim());
 
     lc.innerHTML=`<div class="dots"><span></span><span></span><span></span></div><p style="font-size:13px;color:var(--text2);margin-top:10px;">${l.loadImg}</p>`;
+    // 触发后端原生 AI 生成
     const imgs=await fetchImgs(rec.search_keywords);
     lc.style.display='none';
     const rc=document.getElementById('resCards');rc.style.display='flex';rc.style.flexDirection='column';rc.style.gap='12px';
 
     const wb=wdata&&rec.weather_tip?`<div style="margin-top:8px;padding:8px 10px;background:var(--bg2);border-radius:var(--rs);font-size:12px;color:var(--text);line-height:1.5;">${WICO[wdata.weather[0].main]||'🌤️'} ${rec.weather_tip}</div>`:'';
+    
+    // 生成精绘的单张大图 UI
+    const imgHtml = imgs[0].url ? 
+      `<div class="img-box" onclick="window.open('${imgs[0].link}','_blank')" style="cursor:pointer;"><img src="${imgs[0].url}" loading="lazy"><div class="ilabel">${l.lblRef}</div></div>` :
+      `<div class="img-box" style="aspect-ratio:1/1;"><div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;color:var(--text3);padding:8px;text-align:center;">${imgs[0].kw}</div></div>`;
 
     rc.innerHTML=`
       <div class="card"><div class="clabel">${l.lblFort}</div><div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap;"><span class="sbadge">${selSign}</span><span style="font-size:13px;color:var(--text);line-height:1.6;">${rec.fortune}</span></div>${wb}</div>
       <div class="card"><div class="clabel">${l.lblCol}</div><div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">${rec.colors.map(c=>`<div style="text-align:center;"><div class="swatch" style="background:${c.hex};"></div><div style="font-size:11px;color:var(--text2);margin-top:3px;">${c.name}</div><div style="font-size:10px;color:var(--text3);">${c.reason}</div></div>`).join('')}</div></div>
       <div class="card"><div class="clabel">${l.lblOut}</div><div style="background:var(--bg2);border-radius:var(--rs);padding:8px 10px;font-size:12px;color:var(--text);margin-bottom:9px;">💡 ${rec.body_tip}</div><div style="font-size:14px;font-weight:600;color:var(--text);">${rec.style}</div><div style="display:flex;gap:5px;flex-wrap:wrap;margin:7px 0;">${rec.style_tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="div"></div><div style="font-size:13px;color:var(--text);line-height:1.7;">${rec.outfit_desc}</div></div>
-      <div class="card"><div class="clabel">${l.lblRef}</div><div class="img-grid">${imgs.map(img=>img.url?`<div class="img-box" onclick="window.open('${img.link}','_blank')" style="cursor:pointer;"><img src="${img.url}" loading="lazy"><div class="ilabel">${img.kw}</div></div>`:`<div class="img-box"><div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:10px;color:var(--text3);padding:8px;text-align:center;">${img.kw}</div></div>`).join('')}</div><div style="margin-top:10px;font-size:11px;color:var(--text3);margin-bottom:6px;">${l.lblXhs}</div><div style="display:flex;flex-direction:column;gap:5px;">${(rec.xhs_keywords||[]).map(kw=>`<button class="xhsbtn" onclick="window.open('https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(kw)}','_blank')">${l.xhsBtn(kw)}</button>`).join('')}</div></div>
+      <div class="card"><div class="clabel">${l.lblRef}</div>${imgHtml}<div style="margin-top:10px;font-size:11px;color:var(--text3);margin-bottom:6px;">${l.lblXhs}</div><div style="display:flex;flex-direction:column;gap:5px;">${(rec.xhs_keywords||[]).map(kw=>`<button class="xhsbtn" onclick="window.open('https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(kw)}','_blank')">${l.xhsBtn(kw)}</button>`).join('')}</div></div>
       <button class="go-btn sec" onclick="resetApp()">${l.resetBtn}</button>
     `;
   }catch(e){
